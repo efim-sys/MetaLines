@@ -8,7 +8,7 @@ let pair = undefined
 
 let count = 0
 
-let winCondition = 5
+let winCondition = 3
 
 let fieldSize = 9
 
