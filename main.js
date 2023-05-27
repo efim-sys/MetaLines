@@ -31,7 +31,7 @@ async function doChange(item) {
         pair = item
         cells[pair].children().first().css("transform", "scale(1.25, 1.25)")
     }
-    else if(pair !== item){
+    else if(pair !== item && cells[pair].children().first().text()!==placeholder){
         if(await findPath(cells[pair], cells[item])) {
             spawnRandom3()
             checkLine()
