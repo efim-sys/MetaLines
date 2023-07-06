@@ -33,8 +33,8 @@ async function doChange(item) {
     }
     else if(pair !== item && cells[pair].children().first().text()!==placeholder){
         if(await findPath(cells[pair], cells[item])) {
-            spawnRandom3()
-            checkLine()
+            if(checkLine()) spawnRandom3()
+            
         }
         else alert("Ход Заблокирован!")
         cells[pair].children().first().css("transform", "")
@@ -127,6 +127,7 @@ async function spawnRandom3() {
 }
 
 async function checkLine() {
+    let found = 0
     let streak = {
         color: 0,
         amount: 0
@@ -139,6 +140,7 @@ async function checkLine() {
             else {
                 if(streak.amount >= winCondition && streak.color != placeholder){
                     console.log(i*fieldSize+j, streak)
+                    found ++
                     for(let n = j-1; n >= j - streak.amount; n --) cells[i*fieldSize+n].children().first().text(placeholder)
                 }
                 streak.amount = 1
@@ -156,6 +158,7 @@ async function checkLine() {
             else {
                 if(streak.amount >= winCondition && streak.color != placeholder){
                     console.log(j*fieldSize+i, streak)
+                    found ++
                     for(let n = j-1; n >= j - streak.amount; n --) {
                         cells[n*fieldSize+i].children().first().text(placeholder)
                         console.log(n*fieldSize+i)
@@ -167,6 +170,7 @@ async function checkLine() {
         }
         if(streak.amount >= winCondition && streak.color != placeholder) for(let n = fieldSize-1; n >= fieldSize - streak.amount; n --) cells[n*fieldSize+i].children().first().text(placeholder)
     }
+    return found
 }
 
 spawnRandom3()
