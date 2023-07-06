@@ -33,7 +33,7 @@ async function doChange(item) {
     }
     else if(pair !== item && cells[pair].children().first().text()!==placeholder){
         if(await findPath(cells[pair], cells[item])) {
-            if(checkLine()) spawnRandom3()
+            if(checkLine()==0) spawnRandom3()
             
         }
         else alert("Ход Заблокирован!")
