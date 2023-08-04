@@ -170,6 +170,7 @@ async function checkLine() {
         }
         if(streak.amount >= winCondition && streak.color != placeholder) for(let n = fieldSize-1; n >= fieldSize - streak.amount; n --) cells[n*fieldSize+i].children().first().text(placeholder)
     }
+    console.log("FOUND ROWS: "+found)
     return found
 }
 
