@@ -2,8 +2,6 @@ let balls = ["🔴", "🟡", "🟢", "🔵", "🟣", "⚪"]
 
 let placeholder = "ㅤ"
 
-let cells = new Array(64)
-
 let pair = undefined
 
 let count = 0
@@ -11,6 +9,8 @@ let count = 0
 let winCondition = 3
 
 let fieldSize = 9
+
+let cells = new Array(fieldSize*fieldSize)
 
 for (let i = 0; i < fieldSize*fieldSize; i++) {
     cells[i] = $("<div>", {
@@ -52,7 +52,7 @@ function setRandom(color) {
     empty[Math.floor(Math.random()*empty.length)].children().first().text(balls[color])
 }
 
-let visited = new Array(64).fill(false)
+let visited = new Array(fieldSize*fieldSize).fill(false)
 
 let path = []
 
@@ -98,8 +98,8 @@ function sleep(ms) {
 
 async function animation() {
     let color = cells[path[0]].children().first().text()
-    console.log(color)
-    console.log(path)
+    // console.log(color)
+    // console.log(path)
     for(let i = 0; i < path.length-1; i ++) {
         cells[path[i+1]].children().first().text(cells[path[i]].children().first().text())
         cells[path[i]].children().first().text(placeholder)
@@ -127,51 +127,57 @@ async function spawnRandom3() {
 }
 
 async function checkLine() {
-    let found = 0
-    let streak = {
-        color: 0,
-        amount: 0
-    }
+    removalMatrix = new Array(fieldSize*fieldSize).fill(" ")
+    matrix = []
     for(let i = 0; i < fieldSize; i++) {
-        streak.amount = 0
-        streak.color = cells[i*fieldSize].children().first().text()
+        s = ""
         for(let j = 0; j < fieldSize; j++) {
-            if(streak.color === cells[i*fieldSize+j].children().first().text()) streak.amount ++
-            else {
-                if(streak.amount >= winCondition && streak.color != placeholder){
-                    console.log(i*fieldSize+j, streak)
-                    found ++
-                    for(let n = j-1; n >= j - streak.amount; n --) cells[i*fieldSize+n].children().first().text(placeholder)
-                }
-                streak.amount = 1
-                streak.color = cells[i*fieldSize+j].children().first().text()
+            s+=cells[i*fieldSize+j].children().first().text()
+        }
+        matrix.push(s)
+    }
+    
+    matrix.forEach(function(row, ind) {
+        finding = row
+        for(let nm = 0; nm < balls.length; nm++) {
+            for(let ln = fieldSize; ln >= winCondition; ln--) {
+                finding = finding.replace(balls[nm].repeat(ln), "*".repeat(ln))
             }
         }
-        if(streak.amount >= winCondition && streak.color != placeholder) for(let n = fieldSize-1; n >= fieldSize - streak.amount; n --) cells[i*fieldSize+n].children().first().text(placeholder)
+        ([...finding]).forEach(function(e, ind2) { 
+            if (e == "*") removalMatrix[ind*fieldSize+ind2] = "*" 
+            
+        })
+    })
+    matrix = []
+    for(let i = 0; i < fieldSize; i++) {
+        s = ""
+        for(let j = 0; j < fieldSize; j++) {
+            s+=cells[j*fieldSize+i].children().first().text()
+        }
+        matrix.push(s)
     }
+    
+    matrix.forEach(function(row, ind) {
+        
+        finding = row
+        // console.log(finding)
+        for(let nm = 0; nm < balls.length; nm++) {
+            for(let ln = fieldSize; ln >= winCondition; ln--) {
+                finding = finding.replace(balls[nm].repeat(ln), "*".repeat(ln))
+            }
+        }
+        ([...finding]).forEach(function(e, ind2) { 
+            if (e == "*") removalMatrix[ind2*fieldSize+ind] = "*" 
+            
+        })
+    })
+    // console.log(removalMatrix)
+    removalMatrix.forEach((e,ind) => {
+        if(e == "*") cells[ind].children().first().text(placeholder)
+    })
+    
 
-    for(let i = 0; i < fieldSize; i++) {
-        streak.amount = 0
-        streak.color = cells[i].children().first().text()
-        for(let j = 0; j < fieldSize; j++) {
-            if(streak.color === cells[j*fieldSize+i].children().first().text()) streak.amount ++
-            else {
-                if(streak.amount >= winCondition && streak.color != placeholder){
-                    console.log(j*fieldSize+i, streak)
-                    found ++
-                    for(let n = j-1; n >= j - streak.amount; n --) {
-                        cells[n*fieldSize+i].children().first().text(placeholder)
-                        console.log(n*fieldSize+i)
-                    }
-                }
-                streak.amount = 1
-                streak.color = cells[j*fieldSize+i].children().first().text()
-            }
-        }
-        if(streak.amount >= winCondition && streak.color != placeholder) for(let n = fieldSize-1; n >= fieldSize - streak.amount; n --) cells[n*fieldSize+i].children().first().text(placeholder)
-    }
-    console.log("FOUND ROWS: "+found)
-    return found
 }
 
 spawnRandom3()
