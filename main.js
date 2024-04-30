@@ -22,7 +22,7 @@ for (let y = 0; y < fieldSize; y++) {
         area[x][y].click( function() {
             console.log(`X=${x}; Y=${y}`)
             thisBall = {x: x, y: y} 
-if (isCellFree(thisBall)) return
+if (isCellFree(thisBall) && activeBall == undefined) return
             if (activeBall == undefined ) {
                 activeBall = thisBall
                 area[activeBall.x][activeBall.y].children().first().css("transform", "scale(1.25, 1.25)")
